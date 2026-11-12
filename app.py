@@ -1,4 +1,5 @@
 
+
 # import streamlit as st
 # import tensorflow as tf
 # import numpy as np
@@ -133,90 +134,45 @@
 # # LOCAL FRAME IMAGES
 # # =====================================
 
-
-# # =====================================
-# # LOCAL FRAME IMAGES
-# # =====================================
-
-# import os
-
-# FRAME_DIR = BASE_DIR / "frames"
-
-# # Automatically find image files
-# available_images = {}
-
-# for file in os.listdir(FRAME_DIR):
-
-#     if file.lower().endswith((".jpg", ".jpeg", ".png")):
-
-#         key = file.lower().strip()
-
-#         available_images[key] = FRAME_DIR / file
-
-
-# def get_frame_image(filename):
-
-#     # Ignore extra spaces and capitalization
-#     key = filename.lower().strip()
-
-#     if key in available_images:
-#         return available_images[key]
-
-#     # Find matching filename without spaces
-#     for actual_name, path in available_images.items():
-
-#         if actual_name.replace(" ", "") == key.replace(" ", ""):
-#             return path
-
-#     return None
-
-
-# # =====================================
-# # FRAME RECOMMENDATIONS
-# # =====================================
-
 # frames = {
 
 #     "round": [
-#         ("Rectangle Frames", "rectangle.jpg"),
-#         ("Geometric Frames", "geometric.jpg"),
-#         ("Wayfarer Frames", "wayfarer.jpg")
+#         ("Rectangle Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\rectangle.jpg"),
+#         ("Geometric Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\geometric.jpg"),
+#         ("Wayfarer Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\wayfarer.jpg")
 #     ],
 
 #     "oval": [
-#         ("Round Frames", "round.jpg"),
-#         ("Cat Eye Frames", "cat eye.jpg"),
-#         ("Square Frames", "square.jpg")
+#         ("Round Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\round.jpg"),
+#         ("Cat Eye Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\cat eye.jpg"),
+#         ("Square Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\square.jpg")
 #     ],
 
 #     "square": [
-#         ("Round Frames", "round.jpg"),
-#         ("Oval Frames", "oval.jpg"),
-#         ("Cat Eye Frames", "cat eye.jpg")
+#         ("Round Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\round.jpg"),
+#         ("Oval Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\oval.jpg"),
+#         ("Cat Eye Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\cat eye.jpg")
 #     ],
 
 #     "heart": [
-#         ("Oval Frames", "oval.jpg"),
-#         ("Round Frames", "round.jpg"),
-#         ("Aviator Frames", "Aviator.jpg")
+#         ("Oval Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\oval.jpg"),
+#         ("Round Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\round.jpg"),
+#         ("Aviator Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\Aviator.jpg")
 #     ],
 
 #     "oblong": [
-#         ("Oversized Frames", "oversize.jpg"),
-#         ("Aviator Frames", "Aviator.jpg"),
-#         ("Cat Eye Frames", "cat eye.jpg")
+#         ("Oversized Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\oversize.jpg"),
+#         ("Aviator Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\Aviator.jpg"),
+#         ("Cat Eye Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\cat eye.jpg")
 #     ],
 
 #     "diamond": [
-#         ("Cat Eye Frames", "cat eye.jpg"),
-#         ("Oval Frames", "oval.jpg"),
-#         ("Browline Frames", "browline.jpg")
+#         ("Cat Eye Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\cat eye.jpg"),
+#         ("Oval Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\oval.jpg"),
+#         ("Browline Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\browline.jpg")
 #     ]
+
 # }
-
-       
-
-
 
 
 # # =====================================
@@ -421,13 +377,20 @@
 #         "to get AI glasses recommendations."
 #     )
 
-
 import streamlit as st
 import tensorflow as tf
 import numpy as np
 import json
+
 from PIL import Image
 from pathlib import Path
+
+# =====================================
+# PROJECT PATHS
+# =====================================
+
+BASE_DIR = Path(__file__).resolve().parent
+FRAME_DIR = BASE_DIR / "frames"
 
 # =====================================
 # PAGE SETTINGS
@@ -440,19 +403,11 @@ st.set_page_config(
 )
 
 # =====================================
-# PROJECT PATH
-# =====================================
-
-BASE_DIR = Path(__file__).parent
-FRAME_DIR = BASE_DIR / "frames"
-
-# =====================================
 # WEBSITE DESIGN
 # =====================================
 
 st.markdown("""
 <style>
-
 .stApp {
     background: linear-gradient(
         120deg,
@@ -481,7 +436,6 @@ h1, h2, h3 {
     font-size: 25px;
     font-weight: bold;
 }
-
 </style>
 """, unsafe_allow_html=True)
 
@@ -503,18 +457,31 @@ st.write(
 st.markdown("---")
 
 # =====================================
-# LOAD MODELS
+# LOAD AI MODELS
 # =====================================
 
 @st.cache_resource
 def load_models():
 
+    face_model_path = BASE_DIR / "face_shape_model.keras"
+    glass_model_path = BASE_DIR / "glass_model.keras"
+
+    if not face_model_path.exists():
+        raise FileNotFoundError(
+            f"Face model not found: {face_model_path}"
+        )
+
+    if not glass_model_path.exists():
+        raise FileNotFoundError(
+            f"Glasses model not found: {glass_model_path}"
+        )
+
     face_model = tf.keras.models.load_model(
-        BASE_DIR / "face_shape_model.keras"
+        face_model_path
     )
 
     glass_model = tf.keras.models.load_model(
-        BASE_DIR / "glass_model.keras"
+        glass_model_path
     )
 
     return face_model, glass_model
@@ -553,48 +520,93 @@ except Exception as e:
 
 
 # =====================================
-# LOCAL FRAME IMAGES
+# FRAME IMAGE CONFIGURATION
 # =====================================
+# IMPORTANT:
+# Only use image filenames here.
+# Do not use absolute Windows paths.
 
 frames = {
 
     "round": [
-        ("Rectangle Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\rectangle.jpg"),
-        ("Geometric Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\geometric.jpg"),
-        ("Wayfarer Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\wayfarer.jpg")
+        ("Rectangle Frames", "rectangle.jpg"),
+        ("Geometric Frames", "geometric.jpg"),
+        ("Wayfarer Frames", "wayfarer.jpg")
     ],
 
     "oval": [
-        ("Round Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\round.jpg"),
-        ("Cat Eye Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\cat eye.jpg"),
-        ("Square Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\square.jpg")
+        ("Round Frames", "round.jpg"),
+        ("Cat Eye Frames", "cat eye.jpg"),
+        ("Square Frames", "square.jpg")
     ],
 
     "square": [
-        ("Round Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\round.jpg"),
-        ("Oval Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\oval.jpg"),
-        ("Cat Eye Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\cat eye.jpg")
+        ("Round Frames", "round.jpg"),
+        ("Oval Frames", "oval.jpg"),
+        ("Cat Eye Frames", "cat eye.jpg")
     ],
 
     "heart": [
-        ("Oval Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\oval.jpg"),
-        ("Round Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\round.jpg"),
-        ("Aviator Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\Aviator.jpg")
+        ("Oval Frames", "oval.jpg"),
+        ("Round Frames", "round.jpg"),
+        ("Aviator Frames", "Aviator.jpg")
     ],
 
     "oblong": [
-        ("Oversized Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\oversize.jpg"),
-        ("Aviator Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\Aviator.jpg"),
-        ("Cat Eye Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\cat eye.jpg")
+        ("Oversized Frames", "oversize.jpg"),
+        ("Aviator Frames", "Aviator.jpg"),
+        ("Cat Eye Frames", "cat eye.jpg")
     ],
 
     "diamond": [
-        ("Cat Eye Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\cat eye.jpg"),
-        ("Oval Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\oval.jpg"),
-        ("Browline Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\browline.jpg")
+        ("Cat Eye Frames", "cat eye.jpg"),
+        ("Oval Frames", "oval.jpg"),
+        ("Browline Frames", "browline.jpg")
     ]
 
 }
+
+
+# =====================================
+# FIND FRAME IMAGE
+# =====================================
+
+def find_frame_image(filename):
+
+    # First try the exact filename
+    image_path = FRAME_DIR / filename
+
+    if image_path.is_file():
+        return image_path
+
+    # Try case-insensitive filename matching
+    if FRAME_DIR.exists():
+
+        for file in FRAME_DIR.iterdir():
+
+            if (
+                file.is_file()
+                and file.name.lower() == filename.lower()
+            ):
+                return file
+
+    return None
+
+
+# =====================================
+# CHECK FRAME DIRECTORY
+# =====================================
+
+if not FRAME_DIR.exists():
+
+    st.warning(
+        f"Frames folder not found: {FRAME_DIR}"
+    )
+
+    st.info(
+        "Create a folder named 'frames' "
+        "in the same directory as app.py."
+    )
 
 
 # =====================================
@@ -631,7 +643,9 @@ if uploaded_file is not None:
                 use_container_width=True
             )
 
+        # =================================
         # PREPROCESS IMAGE
+        # =================================
 
         img = image.resize((64, 64))
 
@@ -702,7 +716,7 @@ if uploaded_file is not None:
             )
 
             st.progress(
-                face_confidence / 100
+                min(face_confidence / 100, 1.0)
             )
 
             st.write(
@@ -711,7 +725,7 @@ if uploaded_file is not None:
             )
 
             st.progress(
-                glass_confidence / 100
+                min(glass_confidence / 100, 1.0)
             )
 
         # =================================
@@ -742,33 +756,59 @@ if uploaded_file is not None:
 
         cols = st.columns(3)
 
+        missing_images = []
+
         for i, (name, filename) in enumerate(selected_frames):
 
-            image_path = FRAME_DIR / filename
+            # FIXED PATH HANDLING
+            image_path = find_frame_image(filename)
 
             with cols[i]:
 
-                if image_path.exists():
+                if image_path is not None:
 
-                    frame_image = Image.open(
-                        image_path
-                    )
+                    try:
 
-                    st.image(
-                        frame_image,
-                        caption=name,
-                        use_container_width=True
-                    )
+                        frame_image = Image.open(
+                            image_path
+                        ).convert("RGB")
 
-                    st.markdown(
-                        f"**{name}**"
-                    )
+                        st.image(
+                            frame_image,
+                            caption=name,
+                            use_container_width=True
+                        )
+
+                    except Exception as image_error:
+
+                        st.warning(
+                            f"Could not open {filename}: {image_error}"
+                        )
 
                 else:
 
                     st.warning(
                         f"Image not found: {filename}"
                     )
+
+                    missing_images.append(filename)
+
+                st.markdown(
+                    f"**{name}**"
+                )
+
+        # =================================
+        # MISSING IMAGE INFORMATION
+        # =================================
+
+        if missing_images:
+
+            st.info(
+                "Some frame images are missing. "
+                "Please add the following files "
+                "to your frames folder: "
+                + ", ".join(missing_images)
+            )
 
         # =================================
         # SUCCESS MESSAGE
@@ -798,4 +838,5 @@ else:
         "👆 Please upload your face image "
         "to get AI glasses recommendations."
     )
+
 
