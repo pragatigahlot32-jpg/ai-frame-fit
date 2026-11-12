@@ -133,45 +133,90 @@ except Exception as e:
 # LOCAL FRAME IMAGES
 # =====================================
 
+
+# =====================================
+# LOCAL FRAME IMAGES
+# =====================================
+
+import os
+
+FRAME_DIR = BASE_DIR / "frames"
+
+# Automatically find image files
+available_images = {}
+
+for file in os.listdir(FRAME_DIR):
+
+    if file.lower().endswith((".jpg", ".jpeg", ".png")):
+
+        key = file.lower().strip()
+
+        available_images[key] = FRAME_DIR / file
+
+
+def get_frame_image(filename):
+
+    # Ignore extra spaces and capitalization
+    key = filename.lower().strip()
+
+    if key in available_images:
+        return available_images[key]
+
+    # Find matching filename without spaces
+    for actual_name, path in available_images.items():
+
+        if actual_name.replace(" ", "") == key.replace(" ", ""):
+            return path
+
+    return None
+
+
+# =====================================
+# FRAME RECOMMENDATIONS
+# =====================================
+
 frames = {
 
     "round": [
-        ("Rectangle Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\rectangle.jpg"),
-        ("Geometric Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\geometric.jpg"),
-        ("Wayfarer Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\wayfarer.jpg")
+        ("Rectangle Frames", "rectangle.jpg"),
+        ("Geometric Frames", "geometric.jpg"),
+        ("Wayfarer Frames", "wayfarer.jpg")
     ],
 
     "oval": [
-        ("Round Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\round.jpg"),
-        ("Cat Eye Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\cat eye.jpg"),
-        ("Square Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\square.jpg")
+        ("Round Frames", "round.jpg"),
+        ("Cat Eye Frames", "cat eye.jpg"),
+        ("Square Frames", "square.jpg")
     ],
 
     "square": [
-        ("Round Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\round.jpg"),
-        ("Oval Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\oval.jpg"),
-        ("Cat Eye Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\cat eye.jpg")
+        ("Round Frames", "round.jpg"),
+        ("Oval Frames", "oval.jpg"),
+        ("Cat Eye Frames", "cat eye.jpg")
     ],
 
     "heart": [
-        ("Oval Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\oval.jpg"),
-        ("Round Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\round.jpg"),
-        ("Aviator Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\Aviator.jpg")
+        ("Oval Frames", "oval.jpg"),
+        ("Round Frames", "round.jpg"),
+        ("Aviator Frames", "Aviator.jpg")
     ],
 
     "oblong": [
-        ("Oversized Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\oversize.jpg"),
-        ("Aviator Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\Aviator.jpg"),
-        ("Cat Eye Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\cat eye.jpg")
+        ("Oversized Frames", "oversize.jpg"),
+        ("Aviator Frames", "Aviator.jpg"),
+        ("Cat Eye Frames", "cat eye.jpg")
     ],
 
     "diamond": [
-        ("Cat Eye Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\cat eye.jpg"),
-        ("Oval Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\oval.jpg"),
-        ("Browline Frames", r"C:\Users\nsp gaming laptop\OneDrive\Desktop\final streamlit\frames\browline.jpg")
+        ("Cat Eye Frames", "cat eye.jpg"),
+        ("Oval Frames", "oval.jpg"),
+        ("Browline Frames", "browline.jpg")
     ]
-
 }
+
+       
+
+
 
 
 # =====================================
